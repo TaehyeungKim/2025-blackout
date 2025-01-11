@@ -18,7 +18,9 @@ dotenv.config();
 
 // 환경 변수 로드 여부 확인 (디버깅용)
 console.log('SLACK_BOT_TOKEN is set:', !!process.env.SLACK_BOT_TOKEN);
+console.log(process.env.SLACK_BOT_TOKEN);
 console.log('SLACK_SIGNING_SECRET is set:', !!process.env.SLACK_SIGNING_SECRET);
+console.log(process.env.SLACK_SIGNING_SECRET);
 
 // ExpressReceiver 초기화
 const receiver = new ExpressReceiver({
