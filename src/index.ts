@@ -78,13 +78,14 @@ registerNetworkViewHandler(boltApp);
 registerHelpCommand(boltApp);
 registerAdminHelpCommand(boltApp);
 registerHoneyScore(boltApp);
-setInterval(async () => {
-  const response = await useUpdateCrawlingLink(
+const recursiveUpdateCrawlingLink = async (entry: string) => {
+  const result = await useUpdateCrawlingLink(
     'computer',
     'https://www.snu.ac.kr/',
   );
-  console.log(response);
-}, 10000);
+  console.log(result);
+  recursiveUpdateCrawlingLink(result);
+};
 
 // 서버 실행
 (async () => {
