@@ -39,7 +39,7 @@ jobs:
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.EC2_IP }} 
-        username: ec2-user            
+        username: ubuntu            
         key: ${{ secrets.EC2_SSH_KEY }}
         port: 22
         options: '-o StrictHostKeyChecking=no'
@@ -50,6 +50,6 @@ jobs:
           npm install
           npm run build
           cd dist
-          pm2 restart /home/ec2-user/2025-blackout/dist/index.js || pm2 start /home/ec2-user/2025-blackout/dist/index.js
+          pm2 restart /home/ubuntu/2025-blackout/dist/index.js || pm2 start /home/ubuntu/2025-blackout/dist/index.js
           echo "Deployment complete!"
 
