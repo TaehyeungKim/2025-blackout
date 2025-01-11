@@ -12,7 +12,8 @@ export const getNextUrlToBegin = async (entryUrl: string) => {
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(10000);
   await page.goto(entryUrl);
-  // await page.waitForEvent('load');
+  await page.waitForEvent('load');
+  console.log('entryUrlLoaded');
   const { textContent: entryTextContent } = await getDocumentTextOfUrl(
     entryUrl,
     page,
@@ -76,6 +77,7 @@ export const useUpdateCrawlingLink = async (
   entryUrl: string,
 ) => {
   const nextAndPrevUrlData = await getNextUrlToBegin(entryUrl);
+  console.log('get prev and next url', nextAndPrevUrlData);
   if (!nextAndPrevUrlData) {
     return entryUrl;
   }
