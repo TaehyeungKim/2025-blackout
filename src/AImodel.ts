@@ -128,6 +128,7 @@ export async function requestLinkInfo(
   More relevant Link: "Most Relevant Link here" `;
 
   const responseText = await callBedrockModel(prompt);
+  console.log(responseText);
   return responseText;
 }
 
