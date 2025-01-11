@@ -121,8 +121,10 @@ export async function requestLinkInfo(
   
   ===================================================
   
-  Input: keyword=${keyword}
-  Pairs: ${data}
+  Input: 
+  keyword=${keyword}
+  Data1: Link=${data[0].link} Text=${data[0].text}
+  Data2: Link=${data[1].link} Text=${data[1].text}
 
   Output Format: 
   More relevant Link: "Most Relevant Link here" `;
