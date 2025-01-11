@@ -13,6 +13,7 @@ import { registerHelpCommand } from './help';
 import { registerAdminHelpCommand } from './admin_help';
 import { registerHoneyScore } from './network/honeyscore';
 import { useUpdateCrawlingLink } from './crawling';
+import { Browser, chromium, Page } from 'playwright';
 
 dotenv.config();
 
@@ -66,6 +67,26 @@ boltApp.action('button_click', async ({ ack, body, client }) => {
     console.error('Error sending message:', error);
   }
 });
+const recursiveUpdateCrawlingLink = async (
+  keyword: string,
+  entry: string,
+  browser: Browser,
+  page: Page,
+) => {
+  const result = await useUpdateCrawlingLink(keyword, entry, browser, page);
+  console.log(result);
+  const regex = /https?:\/\/[^\s]+/g;
+  const matches = result.match(regex);
+  if (!matches) return 'invalid url';
+  recursiveUpdateCrawlingLink(keyword, matches[0], browser, page);
+};
+
+const initializeChromiumAndPage = async (keyword: string, entry: string) => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(10000);
+  recursiveUpdateCrawlingLink(keyword, entry, browser, page);
+};
 
 // 이벤트 핸들러 및 명령어 핸들러 등록
 registerReactionAddedEvent();
@@ -78,15 +99,8 @@ registerNetworkViewHandler(boltApp);
 registerHelpCommand(boltApp);
 registerAdminHelpCommand(boltApp);
 registerHoneyScore(boltApp);
-const recursiveUpdateCrawlingLink = async (keyword: string, entry: string) => {
-  const result = await useUpdateCrawlingLink(keyword, entry);
-  console.log(result);
-  const regex = /https?:\/\/[^\s]+/g;
-  const matches = result.match(regex);
-  if (!matches) return 'invalid url';
-  recursiveUpdateCrawlingLink(keyword, matches[0]);
-};
-recursiveUpdateCrawlingLink('computer', 'https://www.snu.ac.kr/');
+
+initializeChromiumAndPage('computer', 'https://www.snu.ac.kr/');
 
 (async () => {
   const port = process.env.PORT || 3000;
