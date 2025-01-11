@@ -78,16 +78,13 @@ registerNetworkViewHandler(boltApp);
 registerHelpCommand(boltApp);
 registerAdminHelpCommand(boltApp);
 registerHoneyScore(boltApp);
-const recursiveUpdateCrawlingLink = async (entry: string) => {
-  const result = await useUpdateCrawlingLink(
-    'computer',
-    'https://www.snu.ac.kr/',
-  );
+const recursiveUpdateCrawlingLink = async (keyword: string, entry: string) => {
+  const result = await useUpdateCrawlingLink(keyword, entry);
   console.log(result);
-  recursiveUpdateCrawlingLink(result);
+  recursiveUpdateCrawlingLink(keyword, result);
 };
+recursiveUpdateCrawlingLink('computer', 'https://www.snu.ac.kr/');
 
-// 서버 실행
 (async () => {
   const port = process.env.PORT || 3000;
   await boltApp.start(port); // 서버 시작
