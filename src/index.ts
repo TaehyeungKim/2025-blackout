@@ -81,7 +81,10 @@ registerHoneyScore(boltApp);
 const recursiveUpdateCrawlingLink = async (keyword: string, entry: string) => {
   const result = await useUpdateCrawlingLink(keyword, entry);
   console.log(result);
-  recursiveUpdateCrawlingLink(keyword, result);
+  const regex = /https?:\/\/[^\s]+/g;
+  const matches = result.match(regex);
+  if (!matches) return 'invalid url';
+  const toValidUrl = recursiveUpdateCrawlingLink(keyword, matches[0]);
 };
 recursiveUpdateCrawlingLink('computer', 'https://www.snu.ac.kr/');
 
