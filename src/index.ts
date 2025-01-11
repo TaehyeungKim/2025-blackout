@@ -78,13 +78,12 @@ registerNetworkViewHandler(boltApp);
 registerHelpCommand(boltApp);
 registerAdminHelpCommand(boltApp);
 registerHoneyScore(boltApp);
-setInterval(async () => {
-  const result = await useUpdateCrawlingLink(
-    'computer',
-    'https://www.snu.ac.kr/',
-  );
-  console.log(result);
-}, 10000);
+const testResponse = useUpdateCrawlingLink(
+  'computer',
+  'https://www.snu.ac.kr/',
+);
+testResponse.then((res) => console.log('ai generate ui', res));
+
 // 서버 실행
 (async () => {
   const port = process.env.PORT || 3000;
