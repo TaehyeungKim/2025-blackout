@@ -56,9 +56,9 @@ receiver.router.post('/slack/events', (req, res) => {
   res.status(200).send(); // 다른 요청에 대해 200 응답
 });
 
-receiver.router.post('/slack/searchinfo', (req, res) => {
-  console.log('찾기');
-});
+// receiver.router.post('/slack/searchinfo', (req, res) => {
+//   console
+// });
 
 // Slack Bolt 앱 초기화
 export const boltApp = new App({
@@ -84,12 +84,14 @@ boltApp.command('/searchinfo', async ({ command, ack, client }) => {
     const id = targetChannel.id;
     if (!id) return;
     const members = await getChannelMembers(id);
+    console.log(members);
     if (!members) return;
     const randomMemberIndex = Math.floor(
       Math.min(members.length - 1, Math.floor(Math.random() * 10)),
     );
     const url = await emitUpdateCrawlingEvent('컴퓨터', 'https://snu.ac.kr');
     const parsed = await crawlSite(url);
+    console.log(parsed);
 
     const text = await requestInformation(parsed);
     try {
@@ -102,7 +104,7 @@ boltApp.command('/searchinfo', async ({ command, ack, client }) => {
     // 사용자 DM으로 메시지 전송
     await client.chat.postMessage({
       channel: userId, // 사용자 ID를 DM 채널로 사용
-      text: `🔍 You searched for: *${query}*.\nHere's some information about your query: [example link](https://example.com).`,
+      text: `🔍 You searched for: *${query}*.\nHere's some information about your query: [example link](https://snu.ac.kr).`,
     });
 
     console.log(`Message sent to user ${userId}`);
