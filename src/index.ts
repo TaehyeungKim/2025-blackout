@@ -77,7 +77,10 @@ const recursiveUpdateCrawlingLink = async (
   console.log(result);
   const regex = /https?:\/\/[^\s]+/g;
   const matches = result.match(regex);
-  if (!matches) return 'invalid url';
+  if (!matches) {
+    recursiveUpdateCrawlingLink(keyword, entry, browser, page);
+    return;
+  }
   recursiveUpdateCrawlingLink(keyword, matches[0], browser, page);
 };
 
