@@ -15,7 +15,7 @@ import { registerHoneyScore } from './network/honeyscore';
 import { useUpdateCrawlingLink } from './crawling';
 import { Browser, chromium, Page } from 'playwright';
 import { WebClient } from '@slack/web-api';
-import { getWorkspaceInfo } from './crawling/execute';
+import { getWorkspaceInfo, getChannels } from './crawling/execute';
 
 dotenv.config();
 
@@ -111,8 +111,7 @@ registerHelpCommand(boltApp);
 registerAdminHelpCommand(boltApp);
 registerHoneyScore(boltApp);
 getWorkspaceInfo();
-
-(async () => {
+getChannels()(async () => {
   const port = process.env.PORT || 3000;
   await boltApp.start(port); // 서버 시작
   console.log(`⚡️ Slack app is running on port ${port}`);

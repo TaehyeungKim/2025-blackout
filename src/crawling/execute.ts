@@ -57,3 +57,21 @@ export const getWorkspaceInfo = async () => {
   const workspaceInfo = JSON.parse(res);
   console.log(workspaceInfo);
 };
+
+export const getChannels = async () => {
+  try {
+    const response = await web.conversations.list({
+      types: 'public_channel,private_channel', // 공개 채널과 비공개 채널 모두 가져오기
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch channels');
+    }
+
+    const channels = response.channels;
+    console.log('Available Channels:', channels);
+    return channels;
+  } catch (error) {
+    console.error('Error fetching channels:', error);
+  }
+};
