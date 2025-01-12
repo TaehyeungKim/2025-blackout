@@ -15,7 +15,6 @@ import { registerHoneyScore } from './network/honeyscore';
 import { useUpdateCrawlingLink } from './crawling';
 import { Browser, chromium, Page } from 'playwright';
 import { WebClient } from '@slack/web-api';
-import { getWorkspaceInfo, getChannels } from './crawling/execute';
 
 dotenv.config();
 
@@ -110,8 +109,7 @@ registerNetworkViewHandler(boltApp);
 registerHelpCommand(boltApp);
 registerAdminHelpCommand(boltApp);
 registerHoneyScore(boltApp);
-getWorkspaceInfo();
-getChannels();
+
 (async () => {
   const port = process.env.PORT || 3000;
   await boltApp.start(port); // 서버 시작
