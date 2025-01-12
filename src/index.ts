@@ -46,6 +46,8 @@ receiver.router.use(express.json());
 receiver.router.post('/slack/events', (req, res) => {
   const { type, challenge } = req.body;
 
+  console.log('요청', req.body);
+
   if (type === 'url_verification') {
     res.status(200).send(challenge); // Slack에서 보내는 검증 요청 처리
     return;
