@@ -68,9 +68,3 @@ jobs:
 
           # Start the cron service
           sudo service cron start
-
-          echo "Cron job set. Watching logs..."
-
-          # Tail the cron log to keep the container active
-          tail -f $(pwd)/cron.log
-
