@@ -53,23 +53,11 @@ export const getNextPageLinkByClickA = async (page: Page, browser: Browser) => {
 // 특정 사용자에게 DM 보내는 함수
 export const sendDirectMessage = async (userId: string, message: string) => {
   try {
-    const conversationResponse = await web.conversations.open({
-      users: userId,
-    });
-    if (!conversationResponse.ok) {
-      throw new Error('Failed to open conversation');
-    }
-    const channelId = conversationResponse.channel?.id;
-    if (!channelId) {
-      throw new Error('Channel ID not found');
-    }
-    const messageResponse = await web.chat.postMessage({
-      channel: channelId,
+    await web.chat.postMessage({
+      channel: userId,
       text: message,
     });
-    if (!messageResponse.ok) {
-      throw new Error('Failed to send message');
-    }
+
     console.log('Message sent successfully!');
   } catch (error) {
     console.error('Error sending message:', error);
