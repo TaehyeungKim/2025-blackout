@@ -14,6 +14,8 @@ import { registerAdminHelpCommand } from './admin_help';
 import { registerHoneyScore } from './network/honeyscore';
 import { useUpdateCrawlingLink } from './crawling';
 import { Browser, chromium, Page } from 'playwright';
+import { WebClient } from '@slack/web-api';
+import { getWorkspaceInfo } from './crawling/execute';
 
 dotenv.config();
 
@@ -27,6 +29,7 @@ console.log(process.env.SLACK_SIGNING_SECRET);
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET!,
 });
+export const web = new WebClient(process.env.SLACK_BOT_TOKEN);
 
 const app = express();
 // 슬랙에서 오는 요청은 application/x-www-form-urlencoded 형식입니다
@@ -67,7 +70,8 @@ boltApp.action('button_click', async ({ ack, body, client }) => {
     console.error('Error sending message:', error);
   }
 });
-const recursiveUpdateCrawlingLink = async (
+
+export const updateCrawlingLink = async (
   keyword: string,
   entry: string,
   browser: Browser,
@@ -78,17 +82,21 @@ const recursiveUpdateCrawlingLink = async (
   const regex = /https?:\/\/[^\s]+/g;
   const matches = result.match(regex);
   if (!matches) {
-    recursiveUpdateCrawlingLink(keyword, entry, browser, page);
-    return;
+    return entry;
   }
-  recursiveUpdateCrawlingLink(keyword, matches[0], browser, page);
+  return matches[0];
 };
 
-const initializeChromiumAndPage = async (keyword: string, entry: string) => {
+export const emitUpdateCrawlingEvent = async (
+  keyword: string,
+  entry: string,
+) => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(10000);
-  recursiveUpdateCrawlingLink(keyword, entry, browser, page);
+  await updateCrawlingLink(keyword, entry, browser, page);
+  await page.close();
+  await browser.close();
 };
 
 // 이벤트 핸들러 및 명령어 핸들러 등록
@@ -102,8 +110,7 @@ registerNetworkViewHandler(boltApp);
 registerHelpCommand(boltApp);
 registerAdminHelpCommand(boltApp);
 registerHoneyScore(boltApp);
-
-initializeChromiumAndPage('computer', 'https://www.snu.ac.kr/');
+getWorkspaceInfo();
 
 (async () => {
   const port = process.env.PORT || 3000;
