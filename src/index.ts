@@ -89,22 +89,24 @@ boltApp.command('/searchinfo', async ({ command, ack, client }) => {
     const randomMemberIndex = Math.floor(
       Math.min(members.length - 1, Math.floor(Math.random() * 10)),
     );
-    const url = await emitUpdateCrawlingEvent('컴퓨터', 'https://snu.ac.kr');
+    const url = await emitUpdateCrawlingEvent(query, 'https://snu.ac.kr');
     const parsed = await crawlSite(url);
     console.log(parsed);
 
-    const text = await requestInformation(parsed);
-    try {
-      const targetMember = members[randomMemberIndex];
-      sendDirectMessage(targetMember, text);
-    } catch (e) {}
+    // const text = await requestInformation(parsed);
+    // try {
+    //   const targetMember = members[randomMemberIndex];
+    //   sendDirectMessage(targetMember, text);
+    // } catch (e) {}
   });
 
   try {
+    const url = await emitUpdateCrawlingEvent(query, 'https://snu.ac.kr');
+    const parsed = await crawlSite(url);
     // 사용자 DM으로 메시지 전송
     await client.chat.postMessage({
       channel: userId, // 사용자 ID를 DM 채널로 사용
-      text: `🔍 You searched for: *${query}*.\nHere's some information about your query: [example link](https://snu.ac.kr).`,
+      text: `🔍 You searched for: *${query}*.\nHere's some information about your query: [example link](${url}).`,
     });
 
     console.log(`Message sent to user ${userId}`);
