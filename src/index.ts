@@ -56,6 +56,10 @@ receiver.router.post('/slack/events', (req, res) => {
   res.status(200).send(); // 다른 요청에 대해 200 응답
 });
 
+receiver.router.post('/slack/searchinfo', (req, res) => {
+  console.log('찾기');
+});
+
 // Slack Bolt 앱 초기화
 export const boltApp = new App({
   token: process.env.SLACK_BOT_TOKEN,
