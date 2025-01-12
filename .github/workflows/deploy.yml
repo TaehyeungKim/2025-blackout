@@ -10,7 +10,7 @@ on:
         description: 'Deployment environment'
         required: true
         default: 'staging'
-
+        
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -54,4 +54,23 @@ jobs:
           export SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }}
           pm2 restart /home/ubuntu/2025-blackout/2025-blackout/dist/index.js || pm2 start /home/ubuntu/2025-blackout/2025-blackout/dist/index.js
           echo "Deployment complete!"
+           #!/bin/bash
+          echo "Setting up cron for 1-minute execution..."
+
+          # Install cron service
+          sudo apt-get update && sudo apt-get install -y cron
+
+          # Define the script to run
+          SCRIPT="cd $(pwd) && npx ts-node /2025-blackout/2025-blackout/src/crawling/execute.ts"
+
+          # Add the script to the cron job
+          (crontab -l 2>/dev/null; echo "* * * * * $SCRIPT >> $(pwd)/cron.log 2>&1") | crontab -
+
+          # Start the cron service
+          sudo service cron start
+
+          echo "Cron job set. Watching logs..."
+
+          # Tail the cron log to keep the container active
+          tail -f $(pwd)/cron.log
 
