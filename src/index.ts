@@ -157,7 +157,8 @@ export const emitUpdateCrawlingEvent = async (
 ) => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
-  page.setDefaultNavigationTimeout(10000);
+  page.setDefaultNavigationTimeout(60000);
+  page.setDefaultTimeout(60000);
   const url = await updateCrawlingLink(keyword, entry, browser, page);
   await page.close();
   await browser.close();
