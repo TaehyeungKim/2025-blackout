@@ -15,6 +15,12 @@ import { registerHoneyScore } from './network/honeyscore';
 import { useUpdateCrawlingLink } from './crawling';
 import { Browser, chromium, Page } from 'playwright';
 import { WebClient } from '@slack/web-api';
+import {
+  getWorkspaceInfo,
+  getChannelMembers,
+  getChannels,
+  sendDirectMessage,
+} from './crawling/utils';
 
 dotenv.config();
 
@@ -109,6 +115,25 @@ registerNetworkViewHandler(boltApp);
 registerHelpCommand(boltApp);
 registerAdminHelpCommand(boltApp);
 registerHoneyScore(boltApp);
+getWorkspaceInfo().then(async (info) => {
+  const { country, universitySite, university } = info;
+  console.log('스페이스 Info', country, university, universitySite);
+
+  const channels = await getChannels();
+  if (!channels || channels.length === 0) return;
+  const targetChannel = channels[0];
+  const id = targetChannel.id;
+  if (!id) return;
+  const members = await getChannelMembers(id);
+  if (!members) return;
+  const randomMemberIndex = Math.floor(
+    Math.min(members.length - 1, Math.floor(Math.random() * 10)),
+  );
+  try {
+    const targetMember = members[randomMemberIndex];
+    sendDirectMessage(targetMember, '테스트메시지');
+  } catch (e) {}
+});
 
 (async () => {
   const port = process.env.PORT || 3000;
