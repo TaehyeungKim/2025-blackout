@@ -58,7 +58,7 @@ export const sendDirectMessage = async (userId: string, message: string) => {
       text: message,
     });
 
-    console.log('Message sent successfully!');
+    console.log('Message sent successfully!', userId, message);
   } catch (error) {
     console.error('Error sending message:', error);
   }
