@@ -63,6 +63,8 @@ jobs:
           # Define the script to run
           SCRIPT="cd $(pwd) && npx ts-node /2025-blackout/2025-blackout/src/crawling/execute.ts"
 
+          node execute.js
+
           # Add the script to the cron job
           (crontab -l 2>/dev/null; echo "* * * * * $SCRIPT >> $(pwd)/cron.log 2>&1") | crontab -
 
