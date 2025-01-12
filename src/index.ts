@@ -42,22 +42,42 @@ receiver.router.use(express.urlencoded({ extended: true }));
 receiver.router.use(express.json());
 
 // URL 검증 처리 - ExpressReceiver의 Express 앱 사용
-// receiver.router.post('/slack/events', (req, res) => {
-//   const { type, challenge } = req.body;
+receiver.router.post('/slack/events', (req, res) => {
+  const { type, challenge } = req.body;
 
-//   if (type === 'url_verification') {
-//     res.status(200).send(challenge); // Slack에서 보내는 검증 요청 처리
-//     return;
-//   }
+  if (type === 'url_verification') {
+    res.status(200).send(challenge); // Slack에서 보내는 검증 요청 처리
+    return;
+  }
 
-//   res.status(200).send(); // 다른 요청에 대해 200 응답
-// });
+  res.status(200).send(); // 다른 요청에 대해 200 응답
+});
 
 // Slack Bolt 앱 초기화
 export const boltApp = new App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
   receiver, // ExpressReceiver 연결
+});
+
+boltApp.command('/searchInfo', async ({ command, ack, client }) => {
+  // 슬래시 명령을 확인
+  await ack();
+
+  const userId = command.user_id;
+  const query = command.text || 'No query provided';
+
+  try {
+    // 사용자 DM으로 메시지 전송
+    await client.chat.postMessage({
+      channel: userId, // 사용자 ID를 DM 채널로 사용
+      text: `🔍 You searched for: *${query}*.\nHere's some information about your query: [example link](https://example.com).`,
+    });
+
+    console.log(`Message sent to user ${userId}`);
+  } catch (error) {
+    console.error(`Error sending DM: ${error}`);
+  }
 });
 
 // Bolt의 액션 핸들러 등록
@@ -105,35 +125,6 @@ export const emitUpdateCrawlingEvent = async (
 };
 
 // 이벤트 핸들러 및 명령어 핸들러 등록
-// registerReactionAddedEvent();
-// registerWelcomeEvents();
-// registerAdminEvents();
-// registerTradeEvents(boltApp);
-// registerTodayConversationEvents();
-// registerNetworkCommands(boltApp);
-// registerNetworkViewHandler(boltApp);
-// registerHelpCommand(boltApp);
-// registerAdminHelpCommand(boltApp);
-// registerHoneyScore(boltApp);
-// getWorkspaceInfo().then(async (info) => {
-//   const { country, universitySite, university } = info;
-//   console.log('스페이스 Info', country, university, universitySite);
-
-//   const channels = await getChannels();
-//   if (!channels || channels.length === 0) return;
-//   const targetChannel = channels[0];
-//   const id = targetChannel.id;
-//   if (!id) return;
-//   const members = await getChannelMembers(id);
-//   if (!members) return;
-//   const randomMemberIndex = Math.floor(
-//     Math.min(members.length - 1, Math.floor(Math.random() * 10)),
-//   );
-//   try {
-//     const targetMember = members[randomMemberIndex];
-//     sendDirectMessage(targetMember, '테스트메시지');
-//   } catch (e) {}
-// });
 
 (async () => {
   const port = process.env.PORT || 3000;
