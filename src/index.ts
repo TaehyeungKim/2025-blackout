@@ -60,7 +60,7 @@ export const boltApp = new App({
   receiver, // ExpressReceiver 연결
 });
 
-boltApp.command('/searchInfo', async ({ command, ack, client }) => {
+boltApp.command('/searchinfo', async ({ command, ack, client }) => {
   // 슬래시 명령을 확인
   await ack();
 
