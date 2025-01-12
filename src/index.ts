@@ -99,10 +99,7 @@ boltApp.command('/searchinfo', async ({ command, ack, client }) => {
     // } catch (e) {}
   });
 
-  const url = await emitUpdateCrawlingEvent(
-    query,
-    'https://snulion-web.vercel.app/',
-  );
+  const url = await emitUpdateCrawlingEvent(query, 'https://snu.ac.kr/');
   try {
     const parsed = await crawlSite(url);
     const text = await requestInformation(parsed);
