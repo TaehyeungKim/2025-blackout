@@ -111,7 +111,8 @@ registerHelpCommand(boltApp);
 registerAdminHelpCommand(boltApp);
 registerHoneyScore(boltApp);
 getWorkspaceInfo();
-getChannels()(async () => {
+getChannels();
+(async () => {
   const port = process.env.PORT || 3000;
   await boltApp.start(port); // 서버 시작
   console.log(`⚡️ Slack app is running on port ${port}`);
