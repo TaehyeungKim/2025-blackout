@@ -79,12 +79,16 @@ export const useUpdateCrawlingLink = async (
   browser: Browser,
   page: Page,
 ) => {
-  const nextAndPrevUrlData = await getNextUrlToBegin(entryUrl, browser, page);
-  console.log('get prev and next url', nextAndPrevUrlData);
-  if (!nextAndPrevUrlData) {
-    return entryUrl;
+  let nextAndPrevUrlData: { link: string; text: string }[] | undefined =
+    undefined;
+  while (!nextAndPrevUrlData) {
+    const data = await getNextUrlToBegin(entryUrl, browser, page);
+    console.log('get prev and next url', data);
+    if (data) {
+      nextAndPrevUrlData = data;
+      break;
+    }
   }
   const result = await requestLinkInfo(keyword, nextAndPrevUrlData);
-
   return result;
 };
