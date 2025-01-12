@@ -13,7 +13,6 @@ export const getNextUrlToBegin = async (
   page: Page,
 ) => {
   await page.goto(entryUrl);
-  // await page.waitForEvent('load');
   console.log('entryUrlLoaded');
   const { textContent: entryTextContent } = await getDocumentTextOfUrl(
     entryUrl,
@@ -50,7 +49,6 @@ export const getNextUrlToBegin = async (
     ];
     return result;
   }
-  await browser.close();
   return;
 };
 
