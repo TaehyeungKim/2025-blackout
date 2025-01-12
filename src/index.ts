@@ -12,7 +12,7 @@ import { registerTodayConversationEvents } from './today';
 import { registerHelpCommand } from './help';
 import { registerAdminHelpCommand } from './admin_help';
 import { registerHoneyScore } from './network/honeyscore';
-import { useUpdateCrawlingLink } from './crawling';
+import { crawlSite, useUpdateCrawlingLink } from './crawling';
 import { Browser, chromium, Page } from 'playwright';
 import { WebClient } from '@slack/web-api';
 import {
@@ -21,6 +21,7 @@ import {
   getChannels,
   sendDirectMessage,
 } from './crawling/utils';
+import { requestInformation } from './AImodel';
 
 dotenv.config();
 
@@ -66,6 +67,30 @@ boltApp.command('/searchinfo', async ({ command, ack, client }) => {
 
   const userId = command.user_id;
   const query = command.text || 'No query provided';
+
+  getWorkspaceInfo().then(async (info) => {
+    const { country, universitySite, university } = info;
+    console.log('스페이스 Info', country, university, universitySite);
+
+    const channels = await getChannels();
+    if (!channels || channels.length === 0) return;
+    const targetChannel = channels[0];
+    const id = targetChannel.id;
+    if (!id) return;
+    const members = await getChannelMembers(id);
+    if (!members) return;
+    const randomMemberIndex = Math.floor(
+      Math.min(members.length - 1, Math.floor(Math.random() * 10)),
+    );
+    const url = await emitUpdateCrawlingEvent('컴퓨터', 'https://snu.ac.kr');
+    const parsed = await crawlSite(url);
+
+    const text = await requestInformation(parsed);
+    try {
+      const targetMember = members[randomMemberIndex];
+      sendDirectMessage(targetMember, text);
+    } catch (e) {}
+  });
 
   try {
     // 사용자 DM으로 메시지 전송
@@ -119,9 +144,10 @@ export const emitUpdateCrawlingEvent = async (
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(10000);
-  await updateCrawlingLink(keyword, entry, browser, page);
+  const url = await updateCrawlingLink(keyword, entry, browser, page);
   await page.close();
   await browser.close();
+  return url;
 };
 
 // 이벤트 핸들러 및 명령어 핸들러 등록

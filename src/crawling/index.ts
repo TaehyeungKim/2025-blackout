@@ -57,7 +57,7 @@ export const getNextUrlToBegin = async (
   return;
 };
 
-const crawlSite = async (url: string, recursive: boolean = true) => {
+export const crawlSite = async (url: string, recursive: boolean = true) => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
 
@@ -72,6 +72,8 @@ const crawlSite = async (url: string, recursive: boolean = true) => {
   console.log(pageContent);
 
   await browser.close();
+
+  return pageContent;
 };
 
 // 시작 URL을 입력
