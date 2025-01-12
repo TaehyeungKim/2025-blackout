@@ -36,22 +36,22 @@ const receiver = new ExpressReceiver({
 });
 export const web = new WebClient(process.env.SLACK_BOT_TOKEN);
 
-const app = express();
+// const app = express();
 // 슬랙에서 오는 요청은 application/x-www-form-urlencoded 형식입니다
 receiver.router.use(express.urlencoded({ extended: true }));
 receiver.router.use(express.json());
 
 // URL 검증 처리 - ExpressReceiver의 Express 앱 사용
-receiver.router.post('/slack/events', (req, res) => {
-  const { type, challenge } = req.body;
+// receiver.router.post('/slack/events', (req, res) => {
+//   const { type, challenge } = req.body;
 
-  if (type === 'url_verification') {
-    res.status(200).send(challenge); // Slack에서 보내는 검증 요청 처리
-    return;
-  }
+//   if (type === 'url_verification') {
+//     res.status(200).send(challenge); // Slack에서 보내는 검증 요청 처리
+//     return;
+//   }
 
-  res.status(200).send(); // 다른 요청에 대해 200 응답
-});
+//   res.status(200).send(); // 다른 요청에 대해 200 응답
+// });
 
 // Slack Bolt 앱 초기화
 export const boltApp = new App({
@@ -61,20 +61,20 @@ export const boltApp = new App({
 });
 
 // Bolt의 액션 핸들러 등록
-boltApp.action('button_click', async ({ ack, body, client }) => {
-  await ack(); // 액션을 확인합니다.
+// boltApp.action('button_click', async ({ ack, body, client }) => {
+//   await ack(); // 액션을 확인합니다.
 
-  try {
-    // 클릭한 사용자에게 DM 전송
-    await client.chat.postMessage({
-      channel: body.user.id, // 사용자 ID로 메시지 전송
-      text: 'Button clicked! Here is your response.',
-    });
-    console.log('Message sent to user:', body.user.id);
-  } catch (error) {
-    console.error('Error sending message:', error);
-  }
-});
+//   try {
+//     // 클릭한 사용자에게 DM 전송
+//     await client.chat.postMessage({
+//       channel: body.user.id, // 사용자 ID로 메시지 전송
+//       text: 'Button clicked! Here is your response.',
+//     });
+//     console.log('Message sent to user:', body.user.id);
+//   } catch (error) {
+//     console.error('Error sending message:', error);
+//   }
+// });
 
 export const updateCrawlingLink = async (
   keyword: string,
@@ -105,16 +105,16 @@ export const emitUpdateCrawlingEvent = async (
 };
 
 // 이벤트 핸들러 및 명령어 핸들러 등록
-registerReactionAddedEvent();
-registerWelcomeEvents();
-registerAdminEvents();
-registerTradeEvents(boltApp);
-registerTodayConversationEvents();
-registerNetworkCommands(boltApp);
-registerNetworkViewHandler(boltApp);
-registerHelpCommand(boltApp);
-registerAdminHelpCommand(boltApp);
-registerHoneyScore(boltApp);
+// registerReactionAddedEvent();
+// registerWelcomeEvents();
+// registerAdminEvents();
+// registerTradeEvents(boltApp);
+// registerTodayConversationEvents();
+// registerNetworkCommands(boltApp);
+// registerNetworkViewHandler(boltApp);
+// registerHelpCommand(boltApp);
+// registerAdminHelpCommand(boltApp);
+// registerHoneyScore(boltApp);
 getWorkspaceInfo().then(async (info) => {
   const { country, universitySite, university } = info;
   console.log('스페이스 Info', country, university, universitySite);
